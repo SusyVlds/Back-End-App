@@ -35,7 +35,10 @@ Route::controller(authController::Class)->group(function(){
 Route::middleware('auth:sanctum')->delete('/logout', [AuthController::class, 'logout']);
 Route::get('/users/show/{id}', [UserController::class,'showById']);
 
+Route::put('/newPassword/{email}', [authController::class,'newPassword']);   //updat
+        //forma en que se encuentra                      nombre del métod 
 
+Route::post('/crearFoto/{user_id}', [AuthController::class, 'crearFoto']);
 
 // aqui es donde vamos a hacer la ruta para consumir el servicio
 

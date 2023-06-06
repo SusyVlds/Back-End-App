@@ -9,6 +9,7 @@ use App\Models\User;
 //laravel nos da una libreria con el metodo auth para facilitarnos la vida en la autenticacion
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {//para asignrar una variable en php se usa el $nombreVariable
@@ -77,6 +78,42 @@ public function logout(Request $request){
    ]);
 }
 
+public function newPassword($email){ //recbie de parametro el email 
+        //se verifica que el email corrsponda a un usuario 
+    $user = User::where('email', $email)->first();  // v o f    recupera todo del usario 
+    // es una consulta de select donde regresa al usuario con el mismo email 
+        
+    if (!$user) //si es falso, no se encuentra a nadie 
+    {
+        return response()->json(['message' => 'El usuario no esta registrado en la base de datos'], 200);
+    }
+    else   //si es verdadero, se encuentra el correro 
+    {
+       
+    $nuevaContraseña = Str::random(6);  //se crea una nueva variable para la contraseña, esta será aleatoria 
+        
+       
+    $user->password = Hash::make($nuevaContraseña);   //en el campo password se guarda la nueva contraseña, hash encripta 
+        
+    $user->save();  //se guardan los cambios en la bd
+        
+    //se regresa la respuesta en formato json     
+    return response()->json([
+        'new_password' => $nuevaContraseña,   //se regresa sin encriptar 
+        'message' => 'La contraseña a sido actualizada correctamente',
+    ], 200);
+    }
+}
 
+public function crearFoto(Request $request, $user_id){
+    DB::table('fotos')->insert([
+        'user_id' => $user_id,
+        'foto' => $request -> selectedImage,
+    ]);
+
+    return response()->json([
+        'message' => $request -> selectedImage,
+    ]);
+}
 
 }
